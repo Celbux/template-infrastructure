@@ -1,0 +1,4 @@
+runtime: go116
+
+service: template-infrastructure
+main: github.com/Celbux/template-infrastructure/services/user

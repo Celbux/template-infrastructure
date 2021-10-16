@@ -1,0 +1,7 @@
+runtime: go116
+
+service: template-infrastructure-dataapi
+main: github.com/Celbux/template-infrastructure/services/dataapi
+
+env_variables:
+  TEMPLATE_INFRASTRUCTURE_DATA_API_WEB_API_HOST: "0.0.0.0:8080"

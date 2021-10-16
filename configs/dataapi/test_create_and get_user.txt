@@ -1,0 +1,21 @@
+# Create a user by making a post request to the /createUser endpoint
+[Set(url, "https://template-infrastructure-dot-dev8celbux.uc.r.appspot.com/createUser?ns=template-infrastructure", string)]
+# [Set(url, "http://localhost:8080/createUser?ns=template-infrastructure", string)]
+[Set(headers, "Content-Type___application/json", string)]
+[Set(jsonBody, "{\"FirstName\": \"Harry\",\"LastName\":\"Potter\",\"Data\":\"Gryffindor\"}", string)]
+[Post(url, jsonBody, headers)]
+
+# Assert that the user was created correctly
+[AssertSuccess()]
+
+# Retrieve the user by making a post request to the /getUser endpoint
+[Set(url, "https://template-infrastructure-dot-dev8celbux.uc.r.appspot.com/getUser?ns=template-infrastructure", string)]
+# [Set(url, "http://localhost:8080/getUser?ns=template-infrastructure", string)]
+[Set(headers, "Content-Type___application/json", string)]
+[Set(jsonBody, "{\"ID\": \"HARRYPOTTER\"}", string)]
+[Post(url, jsonBody, headers)]
+[Set(result, [Res("res")], string)]
+
+# Assert that the JSON body is outputted correctly
+[Set(expected, "{\"Data\":\"Gryffindor\",\"FirstName\":\"HARRY\",\"LastName\":\"POTTER\"}", string)]
+[AssertEquals(expected, result)]

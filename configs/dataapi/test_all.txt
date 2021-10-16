@@ -1,0 +1,3 @@
+# Clean the environment and run all the tests
+[Evaluate("clear_db.txt")]
+[Evaluate("test_create_and get_user.txt")]
