@@ -13,7 +13,7 @@ type ProgressBar struct {
 	Length int
 }
 
-// NewProgressBar initializes and returns a new Progress Bar
+// NewProgressBar initializes and returns a new ProgressBar
 func NewProgressBar() ProgressBar {
 	return ProgressBar{
 		Prefix: "Progress",
@@ -26,13 +26,13 @@ func NewProgressBar() ProgressBar {
 // Update refreshes the progress
 func (p ProgressBar) Update(iteration int, total int) {
 	percent := float64(iteration) / float64(total)
-	filledLength := int(p.Length * iteration / total)
+	filledLength := p.Length * iteration / total
 	end := ">"
 
 	if iteration == total {
 		end = "="
 	}
-	bar := strings.Repeat(p.Fill, filledLength) + end + strings.Repeat("-", (p.Length-filledLength))
+	bar := strings.Repeat(p.Fill, filledLength) + end + strings.Repeat("-", p.Length-filledLength)
 	fmt.Printf("\r%s [%s] %.2f%% %s", p.Prefix, bar, percent*100, p.Suffix)
 	if iteration == total {
 		fmt.Println()

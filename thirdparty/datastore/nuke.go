@@ -1,7 +1,7 @@
 package datastore
 
 import (
-	"cloud.google.com/go/datastore"
+	ds "cloud.google.com/go/datastore"
 	"context"
 	"github.com/Celbux/template-infrastructure/business/i"
 	"github.com/Celbux/template-infrastructure/foundation/tools"
@@ -11,7 +11,7 @@ import (
 
 type Nuke struct {
 	Log i.Logger
-	DB *datastore.Client
+	DB *ds.Client
 }
 
 func (n Nuke) DeleteAutomatedTests(ctx context.Context) error {
@@ -23,16 +23,16 @@ func (n Nuke) DeleteAutomatedTests(ctx context.Context) error {
 	n.Log.Println("Deleting template-infrastructure Namespace...")
 	progress := console.NewProgressBar()
 
-	var keys []*datastore.Key
+	var keys []*ds.Key
 	for i, kind := range envKinds {
 		// Update progress bar
 		progress.Update(i+1, len(envKinds))
 
 		// Get all keys from each kind and build up an array to bulk delete
-		query := datastore.NewQuery(kind).KeysOnly().Namespace("template-infrastructure")
+		query := ds.NewQuery(kind).KeysOnly().Namespace("template-infrastructure")
 		it := n.DB.Run(ctx, query)
 		for {
-			var key datastore.Key
+			var key ds.Key
 			keyVal, err := it.Next(&key)
 			if err == iterator.Done {
 				break

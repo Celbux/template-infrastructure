@@ -2,3 +2,6 @@ runtime: go116
 
 service: template-infrastructure
 main: github.com/Celbux/template-infrastructure/services/user
+
+env_variables:
+  TEMPLATE_INFRASTRUCTURE_WEB_API_HOST: "0.0.0.0:8080"

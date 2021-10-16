@@ -27,7 +27,7 @@ func Namespace(log i.Logger) web.Middleware {
 			// Get namespace from url parameter
 			namespace := web.GetParam(r, "ns")
 			if namespace == "" || namespace == "default" {
-				return &web.Error{Err: errors.New("namespace cannot be empty or default")}
+				return web.NewError(errors.New("namespace cannot be empty or default"))
 			}
 
 			// Add namespace to ctx

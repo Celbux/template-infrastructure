@@ -7,11 +7,11 @@ import (
 	"net/http"
 )
 
-type UserHandlers struct {
-	Service user.UserService
+type User struct {
+	Service user.Service
 }
 
-func (u UserHandlers) createUser(
+func (u User) createUser(
 	ctx context.Context,
 	w http.ResponseWriter,
 	r *http.Request,
@@ -40,7 +40,7 @@ func (u UserHandlers) createUser(
 
 }
 
-func (u UserHandlers) getUser(
+func (u User) getUser(
 	ctx context.Context,
 	w http.ResponseWriter,
 	r *http.Request,

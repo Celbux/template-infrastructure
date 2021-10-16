@@ -3,18 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/Celbux/template-infrastructure/business/user"
-	handlers2 "github.com/Celbux/template-infrastructure/services/user/handlers"
-	ds "github.com/Celbux/template-infrastructure/thirdparty/datastore"
+	"github.com/Celbux/template-infrastructure/services/user/handlers"
+	"github.com/Celbux/template-infrastructure/thirdparty/datastore"
+	"github.com/ardanlabs/conf"
+	"github.com/pkg/errors"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
-
-	"github.com/ardanlabs/conf"
-	"github.com/pkg/errors"
 )
 
 func main() {
@@ -75,13 +73,13 @@ func run(log *log.Logger) error {
 		return errors.Wrap(err, "generating config for output")
 	}
 	log.Printf("main: Config :\n%v\n", out)
-	dbSetting := ds.StringToSetting(log, cfg.Datastore.Setting)
+	dbSetting := datastore.StringToSetting(log, cfg.Datastore.Setting)
 
 	// Dependency Injection: Create our Services with their dependencies to
 	// attach on for later access via receiver functions
 	ctx := context.Background()
 	log.Println("main: Initializing database support")
-	dsClient, err := ds.NewClient(ctx, log, ds.Config{
+	dsClient, err := datastore.NewClient(ctx, log, datastore.Config{
 		ProjectID:           cfg.Datastore.ProjectID,
 		EmulatorHost:        cfg.Datastore.EmulatorHost,
 		CredentialsFilePath: cfg.Datastore.CredentialsFilePath,
@@ -99,15 +97,6 @@ func run(log *log.Logger) error {
 		}
 	}()
 
-	userHandlers := handlers2.UserHandlers{
-		Service: user.UserService{
-			CRUD: ds.UserStore{
-				DB: dsClient,
-			},
-			Log:  log,
-		},
-	}
-
 	// Make a channel to listen for an interrupt or terminate signal from the
 	// OS. Use a buffered channel because the signal package requires it.
 	shutdown := make(chan os.Signal, 1)
@@ -115,12 +104,8 @@ func run(log *log.Logger) error {
 
 	// Create the server that will listen and serve
 	api := http.Server{
-		Addr: cfg.Web.APIHost,
-		Handler: handlers2.API(
-			userHandlers,
-			log,
-			shutdown,
-		),
+		Addr:         cfg.Web.APIHost,
+		Handler:      handlers.API(log, dsClient, shutdown),
 		ReadTimeout:  cfg.Web.ReadTimeout,
 		WriteTimeout: cfg.Web.WriteTimeout,
 	}
